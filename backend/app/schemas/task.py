@@ -6,6 +6,10 @@ class BaseTask(BaseModel):
     description: str | None
 
 
+class TaskIn(BaseTask):
+    title: str
+
+
 class TaskOut(BaseTask):
     title: str
 
@@ -14,6 +18,6 @@ class TaskDBBase(BaseTask):
     pk: int | None
 
 
-class TaskDBIn(TaskDBBase):
-    pass
-
+class TaskDBOut(TaskDBBase):
+    class Config:
+        orm_mode = True

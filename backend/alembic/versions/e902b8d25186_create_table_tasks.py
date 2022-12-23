@@ -7,7 +7,7 @@ Create Date: 2022-12-15 11:55:27.702131
 """
 
 # revision identifiers, used by Alembic.
-revision = 'e902b8d25186'
+revision = "e902b8d25186"
 down_revision = None
 branch_labels = None
 depends_on = None

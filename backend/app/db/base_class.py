@@ -13,4 +13,4 @@ class Base:
 
     @declared_attr
     def __table_args__(cls):
-        return {'extend_existing': True}
+        return {"extend_existing": True}

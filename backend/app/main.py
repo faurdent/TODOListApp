@@ -26,7 +26,7 @@ async def create_task(task_obj: TaskCreate, owner: User = Depends(get_current_us
 
 @app.put("/my-tasks/{pk}", response_model=TaskSchema)
 async def update_task(
-        pk: int, task_obj: TaskUpdate, owner: User = Depends(get_current_user), db: Session = Depends(get_db)
+    pk: int, task_obj: TaskUpdate, owner: User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     task_to_update = task.get_with_owner(db=db, pk=pk, owner_id=owner.pk)
     if not task_to_update:
@@ -36,9 +36,7 @@ async def update_task(
 
 
 @app.delete("/my-tasks/{pk}")
-async def delete_task(
-        pk: int, owner: User = Depends(get_current_user), db: Session = Depends(get_db)
-):
+async def delete_task(pk: int, owner: User = Depends(get_current_user), db: Session = Depends(get_db)):
     task_to_delete = task.get_with_owner(db=db, pk=pk, owner_id=owner.pk)
     if not task_to_delete:
         raise HTTPException(status_code=404, detail="Task not found")

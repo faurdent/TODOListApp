@@ -5,9 +5,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from .core.security import verify_password, create_access_token, hash_password
+from .crud import task
 from .dependencies import get_db, get_current_user
-from .models import Task, User
-from .schemas import TaskIn, TaskDBOut, Token
+from .models import User
+from .schemas import TaskSchema, TaskCreate, Token
 
 app = FastAPI()
 
@@ -17,32 +18,39 @@ async def main_page():
     return {"hello": "world"}
 
 
-@app.post("/my-tasks/add-task/", response_model=TaskDBOut)
-async def add_task(task: TaskIn, db: Session = Depends(get_db), owner: User = Depends(get_current_user)):
-    task_info = task.dict()
-    task_info.update({"owner_id": owner.pk})
-    task_obj = Task(**task_info)
-    print(task_obj)
-    db.add(task_obj)
-    db.commit()
-    db.refresh(task_obj)
-    return task_obj
+@app.post("/my-tasks/add-task/", response_model=TaskSchema)
+async def create_task(task_obj: TaskCreate, owner: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    created_task = task.create_with_owner(db=db, obj_in=task_obj, owner_id=owner.pk)
+    print(created_task)
+    return created_task
 
 
-@app.get("/my-tasks/{pk}", response_model=TaskDBOut)
-async def get_one_task(pk: int, db: Session = Depends(get_db), owner: User = Depends(get_current_user)):
-    task_obj = db.query(Task).get(pk)
-    print(owner)
-    if not task_obj:
-        raise HTTPException(status_code=404, detail="Task does not exists")
-    return task_obj
+# @app.post("/my-tasks/add-task/", response_model=TaskDBOut)
+# async def add_task(task: TaskIn, db: Session = Depends(get_db), owner: User = Depends(get_current_user)):
+#     task_info = task.dict()
+#     task_info.update({"owner_id": owner.pk})
+#     task_obj = Task(**task_info)
+#     print(task_obj)
+#     db.add(task_obj)
+#     db.commit()
+#     db.refresh(task_obj)
+#     return task_obj
 
 
-@app.get("/my-tasks/", response_model=list[TaskDBOut])
-async def get_all_tasks(db: Session = Depends(get_db), owner: User = Depends(get_current_user)):
-    queryset = owner.owner_tasks
-    print(queryset)
-    return queryset
+# @app.get("/my-tasks/{pk}", response_model=TaskDBOut)
+# async def get_one_task(pk: int, db: Session = Depends(get_db), owner: User = Depends(get_current_user)):
+#     task_obj = db.query(Task).get(pk)
+#     print(owner)
+#     if not task_obj:
+#         raise HTTPException(status_code=404, detail="Task does not exists")
+#     return task_obj
+#
+#
+# @app.get("/my-tasks/", response_model=list[TaskDBOut])
+# async def get_all_tasks(db: Session = Depends(get_db), owner: User = Depends(get_current_user)):
+#     queryset = owner.owner_tasks
+#     print(queryset)
+#     return queryset
 
 
 @app.post("/sign-up/")

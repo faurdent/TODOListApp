@@ -15,5 +15,11 @@ class CRUDTask(CRUDBase[Task, TaskCreate, TaskUpdate]):
         db.refresh(db_obj)
         return db_obj
 
+    def get_all_by_owner(self, db: Session, owner_id: int):
+        return db.query(self.model).filter(self.model.owner_id == owner_id).all()
+
+    def get_with_owner(self, db: Session, pk: int, owner_id: int):
+        return db.query(self.model).filter(self.model.pk == pk, self.model.owner_id == owner_id).first()
+
 
 task = CRUDTask(Task)

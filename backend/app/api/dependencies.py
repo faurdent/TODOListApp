@@ -10,7 +10,7 @@ from backend.app.db import SessionLocal
 from backend.app.models import User
 from backend.app.schemas import TokenData
 
-oauth2 = OAuth2PasswordBearer(tokenUrl="login/access-token")
+oauth2 = OAuth2PasswordBearer(tokenUrl="access-token")
 
 
 def get_db():

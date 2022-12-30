@@ -46,9 +46,12 @@ async def delete_task(pk: int, owner: User = Depends(get_current_user), db: Sess
 
 @app.get("/my-tasks/{pk}", response_model=TaskSchema)
 async def get_task(pk: int, owner: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    task_obj = task.get_with_owner(db=db, pk=pk, owner_id=owner.pk)
-    print(task_obj)
-    return task_obj
+    # task_obj = task.get_with_owner(db=db, pk=pk, owner_id=owner.pk)
+    if task_obj := task.get_with_owner(db=db, pk=pk, owner_id=owner.pk):
+        return task_obj
+    raise HTTPException(status_code=404, detail="Task not found")
+    # print(task_obj)
+    # return task_obj
 
 
 @app.get("/my-tasks/", response_model=list[TaskSchema])

@@ -1,3 +1,5 @@
+from datetime import date
+
 from pydantic import BaseModel
 
 
@@ -17,7 +19,7 @@ class TaskUpdate(BaseTask):
 class TaskInDBBase(BaseTask):
     pk: int
     title: str
-    owner_id: int
+    day_id: int
 
     class Config:
         orm_mode = True
@@ -31,18 +33,19 @@ class TaskSchema(TaskInDBBase):
     pass
 
 
-# class TaskIn(BaseTask):
-#     title: str
-#
-#
-# class TaskOut(BaseTask):
-#     title: str
-#
-#
-# class TaskDBBase(BaseTask):
-#     pk: int | None
-#
-#
-# class TaskDBOut(TaskDBBase):
-#     class Config:
-#         orm_mode = True
+class WeekBase(BaseModel):
+    start_day: date | None = None
+    owner_id: int | None = None
+
+
+class WeekIn(WeekBase):
+    start_day: date
+    owner_id: int
+
+
+class DaySchema(BaseModel):
+    weekday: str
+    tasks: list[TaskSchema]
+
+    class Config:
+        orm_mode = True

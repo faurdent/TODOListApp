@@ -44,8 +44,9 @@ class WeekIn(WeekBase):
 
 
 class DaySchema(BaseModel):
+    pk: int
     weekday: str
-    tasks: list[TaskSchema]
+    tasks: list[TaskSchema] | None = None
 
     class Config:
         orm_mode = True

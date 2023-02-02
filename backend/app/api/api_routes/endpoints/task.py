@@ -62,9 +62,7 @@ async def add_day(week_start: date, db: Session = Depends(get_db), owner: User =
 
 @router.post("/add-task/{day_pk}")
 async def add_task(
-        task_in: TaskCreate,
-        day_pk: int, db: Session = Depends(get_db),
-        owner: User = Depends(get_current_verified_user)
+    task_in: TaskCreate, day_pk: int, db: Session = Depends(get_db), owner: User = Depends(get_current_verified_user)
 ):
     # current_week = week.get_week_with_owner(db=db, start_day=week_start, owner_id=owner.pk)
     day_obj = day.get(db=db, pk=day_pk)
@@ -76,10 +74,7 @@ async def add_task(
 
 @router.get("/test-tasks/{week_start}", response_model=list[DaySchema])
 async def get_tasks_for_week(
-        week_start: date,
-        db: Session = Depends(get_db),
-        owner: User = Depends(get_current_verified_user)
+    week_start: date, db: Session = Depends(get_db), owner: User = Depends(get_current_verified_user)
 ):
     current_week = week.get_week_with_owner(db=db, start_day=week_start, owner_id=owner.pk)
     return current_week.week_days
-

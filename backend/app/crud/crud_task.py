@@ -10,7 +10,7 @@ from app.schemas import TaskCreate
 
 class CRUDTask(CRUDBase[Task]):
     def create_task_with_day(self, db: Session, day_id: int, task_obj: TaskCreate):
-        db_obj = self.model(day_id=day_id, **task_obj.dict()) # noqa
+        db_obj = self.model(day_id=day_id, **task_obj.dict())  # noqa
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -19,7 +19,7 @@ class CRUDTask(CRUDBase[Task]):
 
 class CRUDWeek(CRUDBase[Week]):
     def create_week_with_owner(self, db: Session, start_day: date, owner_id: int):
-        db_obj = self.model(start_day=start_day, owner_id=owner_id) # noqa
+        db_obj = self.model(start_day=start_day, owner_id=owner_id)  # noqa
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -31,7 +31,7 @@ class CRUDWeek(CRUDBase[Week]):
 
 class CRUDDay(CRUDBase[Day]):
     def create_day_with_week(self, db: Session, week_id: int):
-        db_obj = self.model(weekday="Monday", week_id=week_id) # noqa
+        db_obj = self.model(weekday="Monday", week_id=week_id)  # noqa
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)

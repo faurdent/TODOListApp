@@ -22,4 +22,4 @@ jobs:
           black ./
       - name: Check codestyle
         run:
-          flake8 ./
+          flake8 --config backend/.flake8 ./

@@ -2,10 +2,10 @@ from datetime import date
 
 from sqlalchemy.orm import Session
 
-from backend.app.crud.base import CRUDBase
-from backend.app.models import Task
-from backend.app.models.task import Week, Day
-from backend.app.schemas import TaskCreate
+from app.crud.base import CRUDBase
+from app.models import Task
+from app.models.task import Week, Day
+from app.schemas import TaskCreate
 
 
 class CRUDTask(CRUDBase[Task]):

@@ -3,11 +3,11 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from backend.app.api.dependencies import get_current_user, get_db, get_current_verified_user
-from backend.app.crud import task, week, day
-from backend.app.models import User
-from backend.app.schemas import TaskSchema, TaskUpdate, TaskCreate
-from backend.app.schemas.task import DaySchema
+from app.api.dependencies import get_current_user, get_db, get_current_verified_user
+from app.crud import task, week, day
+from app.models import User
+from app.schemas import TaskSchema, TaskUpdate, TaskCreate
+from app.schemas.task import DaySchema
 
 router = APIRouter()
 

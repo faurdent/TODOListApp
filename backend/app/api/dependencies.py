@@ -5,10 +5,10 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette import status
 
-from backend.app.core.security import ALGORITHM
-from backend.app.db import SessionLocal
-from backend.app.models import User
-from backend.app.schemas import TokenData
+from app.core.security import ALGORITHM
+from app.db import SessionLocal
+from app.models import User
+from app.schemas import TokenData
 
 oauth2 = OAuth2PasswordBearer(tokenUrl="access-token")
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from backend.app.api.api_routes.api_register import api_router
+from app.api.api_routes.api_register import api_router
 
 app = FastAPI()
 

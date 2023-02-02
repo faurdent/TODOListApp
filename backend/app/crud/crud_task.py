@@ -8,25 +8,6 @@ from backend.app.models.task import Week, Day
 from backend.app.schemas import TaskCreate
 
 
-# class CRUDTask(CRUDBase[Task, TaskCreate, TaskUpdate]):
-#     def create_with_owner(self, db: Session, obj_in: TaskCreate, owner_id: int):
-#         obj_in_data = jsonable_encoder(obj_in)
-#         db_obj = self.model(**obj_in_data, owner_id=owner_id) # noqa
-#         db.add(db_obj)
-#         db.commit()
-#         db.refresh(db_obj)
-#         return db_obj
-#
-#     def get_all_by_owner(self, db: Session, owner_id: int):
-#         return db.query(self.model).filter(self.model.owner_id == owner_id).all()
-#
-#     def get_with_owner(self, db: Session, pk: int, owner_id: int):
-#         return db.query(self.model).filter(self.model.pk == pk, self.model.owner_id == owner_id).first()
-#
-#
-# task = CRUDTask(Task)
-
-
 class CRUDTask(CRUDBase[Task]):
     def create_task_with_day(self, db: Session, day_id: int, task_obj: TaskCreate):
         db_obj = self.model(day_id=day_id, **task_obj.dict()) # noqa
@@ -55,9 +36,6 @@ class CRUDDay(CRUDBase[Day]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
-
-    # def get_day_with_week(self, db: Session, start_day: date):
-    #     db_obj = db.query(self.model).filter()
 
 
 task = CRUDTask(Task)

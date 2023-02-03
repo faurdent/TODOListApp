@@ -8,7 +8,7 @@ export default {
   methods: {
     async getData() {
       // const res = await fetch("http://0.0.0.0:8000/")
-      fetch("http://localhost:8000/my-tasks/test-tasks/2023-01-01")
+      fetch("http://localhost:8000/my-tasks/test-tasks/2023-04-09")
           .then(res1 => res1.json())
           .then(json => this.week_data = json)
     }
@@ -27,7 +27,13 @@ export default {
       <li>
         <h2>{{ day.weekday }}</h2>
         <ul v-for="task in day.tasks">
-          <li>{{ task }}</li>
+          <li>
+            {{ task.title }}
+            <div>Description:
+              <span v-if="task.description">{{ task.description }}</span>
+              <span v-else>not provided</span>
+            </div>
+          </li>
         </ul>
       </li>
     </ul>

@@ -6,6 +6,7 @@ Create Date: 2022-12-25 10:54:39.772867
 
 """
 import sqlalchemy as sa
+
 from alembic import op
 
 # revision identifiers, used by Alembic.
@@ -37,7 +38,9 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("pk"),
     )
     with op.batch_alter_table("task", schema=None) as batch_op:
-        batch_op.create_index(batch_op.f("ix_task_owner_id"), ["owner_id"], unique=False)
+        batch_op.create_index(
+            batch_op.f("ix_task_owner_id"), ["owner_id"], unique=False
+        )
 
     # ### end Alembic commands ###
 

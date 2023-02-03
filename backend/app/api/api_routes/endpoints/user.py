@@ -10,10 +10,16 @@ router = APIRouter()
 
 
 @router.post("/sign-up/")
-async def sign_up(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
+async def sign_up(
+    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+):
     if db.query(User).filter(User.email == form_data.username).first():
-        raise HTTPException(status_code=400, detail="User with this email already exists")
-    new_user = User(email=form_data.username, password=hash_password(form_data.password))
+        raise HTTPException(
+            status_code=400, detail="User with this email already exists"
+        )
+    new_user = User(
+        email=form_data.username, password=hash_password(form_data.password)
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

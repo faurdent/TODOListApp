@@ -21,9 +21,15 @@ def get_db():
         db_obj.close()
 
 
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2)) -> User:
+def get_current_user(
+    db: Session = Depends(get_db), token: str = Depends(oauth2)
+) -> User:
     try:
-        payload = jwt.decode(token, "8ZIOl6Rcuh4X+/oK/iArCx4qWSBkGjG3nXGcSlC0xx8=", algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token,
+            "8ZIOl6Rcuh4X+/oK/iArCx4qWSBkGjG3nXGcSlC0xx8=",
+            algorithms=[ALGORITHM],
+        )
         token_data = TokenData(**payload)
     except (jwt.JWTError, ValidationError) as exc:
         raise HTTPException(
@@ -40,5 +46,8 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2)
 
 def get_current_verified_user(current_user: User = Depends(get_current_user)):
     if not current_user.is_verified:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user. Verify your account")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Inactive user. Verify your account",
+        )
     return current_user

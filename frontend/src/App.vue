@@ -1,41 +1,9 @@
 <script>
-export default {
-  data() {
-    return {
-      week_data: []
-    }
-  },
-  methods: {
-    async getData() {
-      // const res = await fetch("http://0.0.0.0:8000/")
-      fetch("http://localhost:8000/my-tasks/test-tasks/2023-04-09")
-          .then(res1 => res1.json())
-          .then(json => this.week_data = json)
-    }
-  },
-  mounted() {
-    this.getData()
-  }
 
-}
 </script>
 
 <template>
-  <div>
-    {{ this.week_data }}
-    <ul v-for="day in week_data">
-      <li>
-        <h2>{{ day.weekday }}</h2>
-        <ul v-for="task in day.tasks">
-          <li>
-            {{ task.title }}
-            <div>Description:
-              <span v-if="task.description">{{ task.description }}</span>
-              <span v-else>not provided</span>
-            </div>
-          </li>
-        </ul>
-      </li>
-    </ul>
+  <div class="container">
+    <router-view :key="$route.path"></router-view>
   </div>
 </template>

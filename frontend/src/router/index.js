@@ -4,7 +4,7 @@ import MainTasksList from "@/components/MainTasksList.vue";
 import DayTasks from "@/components/DayTasks.vue";
 
 const routes = [
-    {path: "/", name: "MainTasksList", component: MainTasksList},
+    {path: "/week/:weekStart?", name: "MainTasksList", component: MainTasksList, props: true},
     {path: "/day/:id", name: "DayTasks", component: DayTasks, props: true},
 ]
 

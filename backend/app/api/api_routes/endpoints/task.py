@@ -29,14 +29,13 @@ async def update_task(
 @router.delete("/{pk}")
 async def delete_task(
         pk: int,
-        owner: User = Depends(get_current_verified_user),
+        # owner: User = Depends(get_current_verified_user),
         db: Session = Depends(get_db),
 ):
-    task_to_delete = task.get_with_owner(db=db, pk=pk, owner_id=owner.pk)
-    if not task_to_delete:
-        raise HTTPException(status_code=404, detail="Task not found")
-    task.delete_by_instance(db, task_to_delete)
-    return {"msg": "Deleted"}
+    deleted_task = task.delete_by_pk(db, pk)
+    if not deleted_task:
+        raise HTTPException(status_code=404, detail="Instance not found")
+    return deleted_task
 
 
 @router.get("/{pk}", response_model=TaskSchema)

@@ -1,6 +1,9 @@
 <script>
+import GoBack from "@/components/GoBack.vue";
+
 export default {
   name: "DayTasks",
+  components: {GoBack},
   props: {
     id: {type: String, required: true}
   },
@@ -25,6 +28,7 @@ export default {
   <div v-if="dayData" class="day">
     <div>{{ dayData }}</div>
     <h1>{{ dayData.weekday }}</h1>
+    <GoBack/>
     <ul>
       <li v-for="task in dayData.tasks" :key="task.pk">
         <h3>{{ task.title }}</h3>

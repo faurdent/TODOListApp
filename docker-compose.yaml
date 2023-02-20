@@ -1,11 +1,30 @@
 version: "3.8"
 
+volumes:
+  postgres_data: { }
+
 services:
   backend:
     ports:
       - "8000:8000"
     env_file:
       - backend/.env
+    environment:
+      - POSTGRES_HOST=postgres
     build:
       context: backend/
       dockerfile: backend.dockerfile
+    profiles:
+      - full_run
+
+  postgres:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:rw
+    env_file:
+      - backend/.env
+    ports:
+      - "5432:5432"
+    profiles:
+      - local_dev
+      - full_run

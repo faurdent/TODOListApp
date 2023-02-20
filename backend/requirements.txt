@@ -13,6 +13,7 @@ passlib==1.7.4
 python-jose[cryptography]==3.3.0
 python-multipart==0.0.5
 
+python-dotenv==0.21.1
 
 # Autoformatting & Codestyle
 pre-commit==3.0.4

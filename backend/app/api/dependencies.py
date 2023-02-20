@@ -14,11 +14,13 @@ oauth2 = OAuth2PasswordBearer(tokenUrl="access-token")
 
 
 def get_db():
-    db_obj = SessionLocal()
-    try:
-        yield db_obj
-    finally:
-        db_obj.close()
+    # db_obj = SessionLocal()
+    # try:
+    #     yield db_obj
+    # finally:
+    #     db_obj.close()
+    async with SessionLocal() as session:
+        yield session
 
 
 def get_current_user(

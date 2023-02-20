@@ -45,10 +45,13 @@ class CRUDBase(Generic[ModelType]):
         return db_obj
 
     def delete_by_pk(self, db: Session, pk: int):
-        obj = db.query(self.model).get(pk)
+        obj = db.query(self.model).filter(self.model.pk == pk).first()
+        if not obj:
+            return
         db.delete(obj)
         db.commit()
-        return
+        return obj
+
 
     def delete_by_instance(self, db: Session, db_obj: Type[ModelType]):
         db.delete(db_obj)

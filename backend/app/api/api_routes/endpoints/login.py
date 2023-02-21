@@ -2,7 +2,8 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_db
 from app.core.security import verify_password, create_access_token
@@ -14,10 +15,10 @@ router = APIRouter()
 
 @router.post("/access-token", response_model=Token)
 async def login_access_token(
-    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+    db: AsyncSession = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):
-    print()
-    user = db.query(User).filter(User.email == form_data.username).first()
+    queryset = await db.execute(select(User).where(User.email == form_data.username))
+    user = queryset.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User does not exists")
     elif not verify_password(form_data.password, user.password):

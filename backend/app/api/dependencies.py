@@ -2,7 +2,8 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from app.core.security import ALGORITHM
@@ -13,18 +14,17 @@ from app.schemas import TokenData
 oauth2 = OAuth2PasswordBearer(tokenUrl="access-token")
 
 
-def get_db():
-    # db_obj = SessionLocal()
-    # try:
-    #     yield db_obj
-    # finally:
-    #     db_obj.close()
+async def get_db():
     async with SessionLocal() as session:
-        yield session
+        try:
+            yield session
+        except Exception as e:
+            print(e)
+            await session.rollback()
 
 
-def get_current_user(
-    db: Session = Depends(get_db), token: str = Depends(oauth2)
+async def get_current_user(
+    db: AsyncSession = Depends(get_db), token: str = Depends(oauth2)
 ) -> User:
     try:
         payload = jwt.decode(
@@ -39,7 +39,8 @@ def get_current_user(
             detail="Could not validate credentials",
         ) from exc
 
-    user = db.query(User).filter(User.pk == token_data.subject).first()
+    queryset = await db.execute(select(User).where(User.c.pk == token_data.subject))
+    user = queryset.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

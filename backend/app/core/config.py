@@ -1,8 +1,11 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+env_path = Path(__file__).resolve().parents[2].joinpath(".env")
+
+load_dotenv(env_path)
 
 
 class AppConfig:
@@ -14,7 +17,7 @@ class AppConfig:
 
     def get_db_url(self):
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}" \
-               f"@{self.POSTGRES_HOST}/{self.POSTGRES_DB}"
+               f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
 
-config = AppConfig()
+app_config = AppConfig()

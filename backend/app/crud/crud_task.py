@@ -23,15 +23,16 @@ class CRUDWeek(CRUDBase[Week]):
     async def create_week_with_owner(self, db: AsyncSession, start_day: date, owner_id: int):
         db_obj = self.model(start_day=start_day, owner_id=owner_id)  # noqa
         db.add(db_obj)
-        await db.commit()
+        await db.flush()
         await db.refresh(db_obj)
         return db_obj
 
     async def get_week_with_owner(self, db: AsyncSession, start_day: date, owner_id: int):
-        week_obj = db.execute(
+        queryset = await db.execute(
             select(self.model).where(self.model.start_day == start_day, self.model.owner_id == owner_id)
         )
-        return week_obj or self.create_week_with_owner(
+        week_obj = queryset.scalars().first()
+        return week_obj or await self.create_week_with_owner(
             db=db, start_day=start_day, owner_id=owner_id
         )
 
@@ -45,12 +46,12 @@ class CRUDDay(CRUDBase[Day]):
         return db_obj
 
     async def create_days_for_week(self, db: AsyncSession, week_id: int):
-        weekdays = ["Monday", "Sunday", "Wednesday", "Tuesday", "Friday"]
+        weekdays = ("Monday", "Sunday", "Wednesday", "Tuesday", "Friday", "Saturday", "Sunday")
         day_objs = [
             self.model(weekday=day_name, week_id=week_id) for day_name in weekdays  # noqa
         ]
         db.add_all(day_objs)
-        await db.commit()
+        await db.flush()
         return day_objs
 
 

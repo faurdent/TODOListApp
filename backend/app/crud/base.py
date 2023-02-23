@@ -17,8 +17,8 @@ class CRUDBase(Generic[ModelType]):
         self.model = model
 
     async def get(self, db: AsyncSession, pk: int):
-        queryset = await db.execute(select(self.model).where(self.model.pk == pk)) # noqa
-        return queryset.scalars().first()
+        queryset = await db.scalars(select(self.model).filter_by(pk=pk))
+        return queryset.first()
 
     async def get_all(self, db: AsyncSession):
         queryset = await db.execute(select(self.model))
@@ -35,7 +35,7 @@ class CRUDBase(Generic[ModelType]):
                 setattr(obj_db, field, update_data[field])
 
         await db.commit()
-        await db.refresh(obj_db)
+        # await db.refresh(obj_db)
         return obj_db
 
     async def create(self, db: AsyncSession, obj_in):
@@ -46,15 +46,10 @@ class CRUDBase(Generic[ModelType]):
         await db.refresh(db_obj)
         return db_obj
 
-    async def delete_by_pk(self, db: AsyncSession, pk: int):
+    async def delete(self, db: AsyncSession, pk: int):
         obj = await self.get(db, pk)
         if not obj:
             return
         await db.delete(obj)
         await db.commit()
         return obj
-
-    async def delete_by_instance(self, db: AsyncSession, db_obj: Type[ModelType]):
-        await db.delete(db_obj)
-        await db.commit()
-        return

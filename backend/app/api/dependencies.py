@@ -16,11 +16,12 @@ oauth2 = OAuth2PasswordBearer(tokenUrl="access-token")
 
 async def get_db():
     async with SessionLocal() as session:
-        try:
-            yield session
-        except Exception as e:
-            print(e)
-            await session.rollback()
+        async with session.begin():
+            try:
+                yield session
+            except Exception as e:
+                await session.rollback()
+                raise e
 
 
 async def get_current_user(
@@ -39,7 +40,7 @@ async def get_current_user(
             detail="Could not validate credentials",
         ) from exc
 
-    queryset = await db.execute(select(User).where(User.c.pk == token_data.subject))
+    queryset = await db.execute(select(User).where(User.pk == token_data.subject))
     user = queryset.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

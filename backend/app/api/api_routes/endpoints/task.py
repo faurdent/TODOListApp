@@ -1,6 +1,7 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user, get_db, get_current_verified_user
@@ -32,7 +33,7 @@ async def delete_task(
         # owner: User = Depends(get_current_verified_user),
         db: Session = Depends(get_db),
 ):
-    deleted_task = await task.delete_by_pk(db, pk)
+    deleted_task = await task.delete(db, pk)
     if not deleted_task:
         raise HTTPException(status_code=404, detail="Instance not found")
     return deleted_task
@@ -41,12 +42,13 @@ async def delete_task(
 @router.get("/{pk}", response_model=TaskSchema)
 async def get_task(
         pk: int,
-        owner: User = Depends(get_current_verified_user),
+        # owner: User = Depends(get_current_verified_user),
         db: Session = Depends(get_db),
 ):
-    if task_obj := task.get_with_owner(db=db, pk=pk, owner_id=owner.pk):
-        return task_obj
-    raise HTTPException(status_code=404, detail="Task not found")
+    task_obj = await task.get(db=db, pk=pk)
+    if not task_obj:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task_obj
 
 
 @router.get("/", response_model=list[TaskSchema])
@@ -101,12 +103,18 @@ async def add_task(
 @router.get("/test-tasks/{week_start}", response_model=list[DaySchema])
 async def get_tasks_for_week(
         week_start: date,
-        db: Session = Depends(get_db),
+        db: AsyncSession = Depends(get_db),
         # owner: User = Depends(get_current_verified_user)
 ):
     current_week = await week.get_week_with_owner(db=db, start_day=week_start, owner_id=1)
-    weekdays = current_week.week_days
-    return weekdays or await day.create_days_for_week(db=db, week_id=current_week.pk)
+    weekdays_query = await db.scalars(current_week.week_days.select())
+    weekdays = weekdays_query.all() or await day.create_days_for_week(db=db, week_id=current_week.pk)
+    list_return = []
+    for weekday in weekdays:
+        query = await db.scalars(weekday.tasks.select())
+        obj = DaySchema(pk=weekday.pk, weekday=weekday.weekday, tasks=query.all())
+        list_return.append(obj)
+    return list_return
 
 
 @router.get("/day/{pk}", response_model=DaySchema)

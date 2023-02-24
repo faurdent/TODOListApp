@@ -40,6 +40,7 @@ class TaskSchema(TaskInDBBase):
 class DaySchema(BaseModel):
     pk: int
     weekday: str
+    day_date: date
     tasks: list[TaskSchema] | None = None
 
     class Config:

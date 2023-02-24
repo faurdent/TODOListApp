@@ -86,5 +86,5 @@ async def get_tasks_for_week(
     current_week = await week.get_week_with_owner(db=db, start_day=week_start, owner_id=1)
     if current_week.week_days:
         return current_week
-    weekdays = await day.create_days_for_week(db, current_week.pk)
-    return WeekSchema(start_day=current_week.start_day, days=weekdays)
+    weekdays = await day.create_days_for_week(db, current_week.pk, week_start)
+    return WeekSchema(start_day=current_week.start_day, week_days=weekdays)

@@ -37,20 +37,18 @@ class TaskSchema(TaskInDBBase):
     pass
 
 
-class WeekBase(BaseModel):
-    start_day: date | None = None
-    owner_id: int | None = None
-
-
-class WeekIn(WeekBase):
-    start_day: date
-    owner_id: int
-
-
 class DaySchema(BaseModel):
     pk: int
     weekday: str
     tasks: list[TaskSchema] | None = None
+
+    class Config:
+        orm_mode = True
+
+
+class WeekSchema(BaseModel):
+    start_day: date
+    week_days: list[DaySchema]
 
     class Config:
         orm_mode = True

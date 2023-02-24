@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_current_user, get_db, get_current_verified_user
+from app.api.dependencies import get_db, get_current_verified_user
 from app.crud import task, week, day
 from app.models import User
 from app.schemas import TaskSchema, TaskUpdate, TaskCreate
-from app.schemas.task import DaySchema
+from app.schemas.task import DaySchema, WeekSchema
 
 router = APIRouter()
 
@@ -17,14 +17,13 @@ router = APIRouter()
 async def update_task(
         pk: int,
         task_obj: TaskUpdate,
-        owner: User = Depends(get_current_user),
+        # owner: User = Depends(get_current_user),
         db: Session = Depends(get_db),
 ):
-    task_to_update = await task.get_with_owner(db=db, pk=pk, owner_id=owner.pk)
+    task_to_update = await task.get(db, pk=pk)
     if not task_to_update:
         raise HTTPException(status_code=404, detail="Task not found")
-    updated_task = await task.update(db=db, obj_in=task_obj, obj_db=task_to_update)
-    return updated_task
+    return await task.update(db=db, obj_in=task_obj, obj_db=task_to_update)
 
 
 @router.delete("/{pk}")
@@ -33,7 +32,7 @@ async def delete_task(
         # owner: User = Depends(get_current_verified_user),
         db: Session = Depends(get_db),
 ):
-    deleted_task = await task.delete(db, pk)
+    deleted_task = await task.delete(db, pk=pk)
     if not deleted_task:
         raise HTTPException(status_code=404, detail="Instance not found")
     return deleted_task
@@ -45,41 +44,23 @@ async def get_task(
         # owner: User = Depends(get_current_verified_user),
         db: Session = Depends(get_db),
 ):
-    task_obj = await task.get(db=db, pk=pk)
+    task_obj = await task.get(db, pk=pk)
     if not task_obj:
         raise HTTPException(status_code=404, detail="Task not found")
     return task_obj
 
 
-@router.post("/{day_pk}")
+@router.post("/{day_pk}", response_model=TaskSchema)
 async def add_task(
         task_in: TaskCreate,
         day_pk: int,
         db: Session = Depends(get_db),
-        owner: User = Depends(get_current_verified_user),
+        # owner: User = Depends(get_current_verified_user),
 ):
-    day_obj = await day.get(db, pk=day_pk)
+    day_obj = await day.get_day_with_owner(db, pk=day_pk, owner_id=1)
     if not day_obj:
         raise HTTPException(status_code=404, detail="Day not found")
-    task_obj = await task.create_task_with_day(db=db, day_id=day_pk, task_obj=task_in)
-    return task_obj
-
-
-@router.get("/week/{week_start}", response_model=list[DaySchema])
-async def get_tasks_for_week(
-        week_start: date,
-        db: AsyncSession = Depends(get_db),
-        # owner: User = Depends(get_current_verified_user)
-):
-    current_week = await week.get_week_with_owner(db=db, start_day=week_start, owner_id=1)
-    weekdays_query = await db.scalars(current_week.week_days.select())
-    weekdays = weekdays_query.all() or await day.create_days_for_week(db=db, week_id=current_week.pk)
-    list_return = []
-    for weekday in weekdays:
-        query = await db.scalars(weekday.tasks.select())
-        obj = DaySchema(pk=weekday.pk, weekday=weekday.weekday, tasks=query.all())
-        list_return.append(obj)
-    return list_return
+    return await task.create_task_with_day(db=db, day_id=day_pk, task_obj=task_in)
 
 
 @router.get("/day/{pk}", response_model=DaySchema)
@@ -94,3 +75,16 @@ async def get_tasks_for_day(
         raise HTTPException(status_code=404, detail="Day not found")
 
     return day_obj
+
+
+@router.get("/week/{week_start}", response_model=WeekSchema)
+async def get_tasks_for_week(
+        week_start: date,
+        db: AsyncSession = Depends(get_db),
+        # owner: User = Depends(get_current_verified_user)
+):
+    current_week = await week.get_week_with_owner(db=db, start_day=week_start, owner_id=1)
+    if current_week.week_days:
+        return current_week
+    weekdays = await day.create_days_for_week(db, current_week.pk)
+    return WeekSchema(start_day=current_week.start_day, days=weekdays)

@@ -21,10 +21,7 @@ class Day(Base):
     day_date: Mapped[date]
     week_id: Mapped[int] = mapped_column(ForeignKey("week.pk"))
     tasks: Mapped[list["Task"]] = relationship(
-        cascade="all, delete-orphan",
-        passive_deletes=True,
-        lazy="joined",
-        order_by=[Task.is_done, Task.deadline]
+        cascade="all, delete-orphan", passive_deletes=True, lazy="joined", order_by=[Task.is_done, Task.deadline]
     )
 
 
@@ -33,8 +30,5 @@ class Week(Base):
     start_day: Mapped[date]
     owner_id: Mapped[int] = mapped_column(ForeignKey("user.pk"))
     week_days: Mapped[list["Day"]] = relationship(
-        cascade="all, delete-orphan",
-        passive_deletes=True,
-        lazy="joined",
-        order_by=Day.pk
+        cascade="all, delete-orphan", passive_deletes=True, lazy="joined", order_by=Day.pk
     )

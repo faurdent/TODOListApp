@@ -29,10 +29,6 @@ class TaskInDBBase(BaseTask):
         orm_mode = True
 
 
-class TaskInDB(TaskInDBBase):
-    pass
-
-
 class TaskSchema(TaskInDBBase):
     pass
 

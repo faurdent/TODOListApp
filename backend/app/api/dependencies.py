@@ -24,9 +24,7 @@ async def get_db():
                 raise e
 
 
-async def get_current_user(
-    db: AsyncSession = Depends(get_db), token: str = Depends(oauth2)
-) -> User:
+async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(oauth2)) -> User:
     try:
         payload = jwt.decode(
             token,

@@ -14,9 +14,7 @@ router = APIRouter()
 
 
 @router.post("/access-token", response_model=Token)
-async def login_access_token(
-    db: AsyncSession = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
-):
+async def login_access_token(db: AsyncSession = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     queryset = await db.execute(select(User).where(User.email == form_data.username))
     user = queryset.scalars().first()
     if not user:

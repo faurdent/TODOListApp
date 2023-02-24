@@ -18,13 +18,12 @@ class CRUDWeek(CRUDBase[Week]):
 
     async def get_week_with_owner(self, db: AsyncSession, start_day: date, owner_id: int):
         queryset = await db.execute(
-            select(self.model).where(self.model.start_day == start_day, self.model.owner_id == owner_id)
+            select(self.model)
+            .where(self.model.start_day == start_day, self.model.owner_id == owner_id)
             .options(joinedload(self.model.week_days).options(joinedload(Day.tasks)))
         )
         week_obj = queryset.scalars().first()
-        return week_obj or await self.create_week_with_owner(
-            db=db, start_day=start_day, owner_id=owner_id
-        )
+        return week_obj or await self.create_week_with_owner(db=db, start_day=start_day, owner_id=owner_id)
 
 
 week = CRUDWeek(Week)

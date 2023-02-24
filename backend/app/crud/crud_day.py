@@ -10,9 +10,6 @@ from app.models import Day, Week
 class CRUDDay(CRUDBase[Day]):
     async def create_days_for_week(self, db: AsyncSession, week_id: int, week_start: date):
         weekdays = ("Monday", "Tuesday", "Wednesday", "Tuesday", "Friday", "Saturday", "Sunday")
-        # day_objs = [
-        #     self.model(weekday=day_name, week_id=week_id, tasks=[]) for day_name in weekdays
-        # ]
         day_objs = []
         for weekday_number, weekday_name in enumerate(weekdays):
             day_date = week_start + timedelta(days=weekday_number)

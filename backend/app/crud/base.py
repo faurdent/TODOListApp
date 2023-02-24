@@ -16,8 +16,8 @@ class CRUDBase(Generic[ModelType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
 
-    async def get(self, db: AsyncSession, pk: int):
-        queryset = await db.scalars(select(self.model).filter_by(pk=pk))
+    async def get(self, db: AsyncSession, **kwargs):
+        queryset = await db.scalars(select(self.model).filter_by(**kwargs))
         return queryset.first()
 
     async def get_all(self, db: AsyncSession):
@@ -47,7 +47,7 @@ class CRUDBase(Generic[ModelType]):
         return db_obj
 
     async def delete(self, db: AsyncSession, pk: int):
-        obj = await self.get(db, pk)
+        obj = await self.get(db, pk=pk)
         if not obj:
             return
         await db.delete(obj)

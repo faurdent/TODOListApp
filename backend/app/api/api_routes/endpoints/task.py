@@ -51,56 +51,21 @@ async def get_task(
     return task_obj
 
 
-@router.get("/", response_model=list[TaskSchema])
-async def get_my_tasks(
-        owner: User = Depends(get_current_verified_user), db: Session = Depends(get_db)
-):
-    return await task.get_all_by_owner(db=db, owner_id=owner.pk)
-
-
-@router.get("/test-week/{week_start}")
-async def get_week(
-        week_start: date,
-        db: Session = Depends(get_db),
-        owner: User = Depends(get_current_user),
-):
-    current_week = await week.get_week_with_owner(
-        db=db, start_day=week_start, owner_id=owner.pk
-    )
-    if current_week:
-        return current_week
-    return await week.create_week_with_owner(db=db, start_day=week_start, owner_id=owner.pk)
-
-
-@router.post("/add-day/", deprecated=True)
-async def add_day(
-        week_start: date,
-        db: Session = Depends(get_db),
-        owner: User = Depends(get_current_verified_user),
-):
-    current_week = await week.get_week_with_owner(
-        db=db, start_day=week_start, owner_id=owner.pk
-    )
-    day_obj = await day.create_day_with_week(db=db, week_id=current_week.pk)
-    print(day_obj)
-    return day_obj
-
-
-@router.post("/add-task/{day_pk}")
+@router.post("/{day_pk}")
 async def add_task(
         task_in: TaskCreate,
         day_pk: int,
         db: Session = Depends(get_db),
         owner: User = Depends(get_current_verified_user),
 ):
-    day_obj = await day.get(db=db, pk=day_pk)
+    day_obj = await day.get(db, pk=day_pk)
     if not day_obj:
         raise HTTPException(status_code=404, detail="Day not found")
     task_obj = await task.create_task_with_day(db=db, day_id=day_pk, task_obj=task_in)
     return task_obj
 
 
-@router.get("/test-tasks/{week_start}", response_model=list[DaySchema])
+@router.get("/week/{week_start}", response_model=list[DaySchema])
 async def get_tasks_for_week(
         week_start: date,
         db: AsyncSession = Depends(get_db),
@@ -120,9 +85,12 @@ async def get_tasks_for_week(
 @router.get("/day/{pk}", response_model=DaySchema)
 async def get_tasks_for_day(
         pk: int,
-        db: Session = Depends(get_db)
+        db: AsyncSession = Depends(get_db),
+        owner: User = Depends(get_current_verified_user)
 ):
-    day_obj = await day.get(db, pk=pk)
+    day_obj = await day.get_day_with_owner(db, pk=pk, owner_id=owner.pk)
+
     if not day_obj:
         raise HTTPException(status_code=404, detail="Day not found")
+
     return day_obj

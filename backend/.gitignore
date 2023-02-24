@@ -155,3 +155,5 @@ cython_debug/
 
 app/db/storage/
 !app/db/storage/.gitkeep
+
+test.py

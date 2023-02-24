@@ -1,21 +1,22 @@
 # Core
-fastapi==0.89.1
+fastapi==0.92.0
 uvicorn==0.20.0
-pydantic[email]==1.10.4
+pydantic[email]==1.10.5
 
 # DB tools
-sqlalchemy==1.4.45
-alembic==1.8.1
-psycopg2-binary==2.9.5
+sqlalchemy==2.0.4
+alembic==1.9.4
+asyncpg==0.27.0
 
 # Security tools
 passlib==1.7.4
 python-jose[cryptography]==3.3.0
 python-multipart==0.0.5
 
+python-dotenv==0.21.1
 
 # Autoformatting & Codestyle
-pre-commit==3.0.3
+pre-commit==3.0.4
 black==23.1.0
 flake8==6.0.0
 pyupgrade==3.3.1

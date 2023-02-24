@@ -1,9 +1,10 @@
-from sqlalchemy import Column, String, Boolean
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
 
 
 class User(Base):
-    email = Column(String(100))
-    password = Column(String(60))
-    is_verified = Column(Boolean)
+    __tablename__ = "user"
+    email: Mapped[str]
+    password: Mapped[str]
+    is_verified: Mapped[bool] = mapped_column(default=True)

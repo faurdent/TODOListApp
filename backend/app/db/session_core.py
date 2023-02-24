@@ -1,11 +1,7 @@
-import pathlib
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from app.core.config import app_config
 
-path = pathlib.Path(__file__).parent.joinpath("storage/db_file.db")
+engine = create_async_engine(app_config.get_db_url(), echo=True)
 
-engine = create_engine(
-    f"sqlite:///{path}", connect_args={"check_same_thread": False}, pool_pre_ping=True
-)
-SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
+SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, autoflush=False)

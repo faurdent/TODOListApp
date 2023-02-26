@@ -78,9 +78,9 @@ async def get_tasks_for_day(
 async def get_tasks_for_week(
     week_start: date,
     db: AsyncSession = Depends(get_db),
-    # owner: User = Depends(get_current_verified_user)
+    owner: User = Depends(get_current_verified_user)
 ):
-    current_week = await week.get_week_with_owner(db=db, start_day=week_start, owner_id=1)
+    current_week = await week.get_week_with_owner(db=db, start_day=week_start, owner_id=owner.pk)
     if current_week.week_days:
         return current_week
     weekdays = await day.create_days_for_week(db, current_week.pk, week_start)

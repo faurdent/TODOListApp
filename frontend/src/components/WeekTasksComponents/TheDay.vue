@@ -3,6 +3,7 @@
     <router-link :to="`/day/${dayData.pk}`">
       <h2 style="display: inline;">{{ dayData.weekday }}</h2>
     </router-link>
+    <p>{{dayData.day_date}}</p>
     <ul>
       <li v-for="task in tasks">
         <the-task :taskData="task" @delete="deleteTask"/>

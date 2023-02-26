@@ -2,6 +2,7 @@
 import dateFormat from "dateformat";
 import TheDay from "@/components/WeekTasksComponents/TheDay.vue";
 import WeeksPagination from "@/components/WeeksPagination.vue";
+import authHeader from "@/services/auth-header";
 
 export default {
   name: "MainTasksList",
@@ -18,15 +19,22 @@ export default {
   },
   methods: {
     async getData() {
-      fetch(`http://localhost:8000/my-tasks/test-tasks/${this.weekStartString}`)
+      fetch(`http://localhost:8000/my-tasks/week/${this.weekStartString}`, {headers: authHeader()})
           .then(res1 => res1.json())
           .then(json => this.weekData = json)
     },
     async deleteTask(day, toDelete) {
       const taskIndex = day.tasks.findIndex(task => task.pk === toDelete)
-      await fetch(`http://localhost:8000/my-tasks/${toDelete}`, {method: "DELETE"})
+      await fetch(`http://localhost:8000/my-tasks/${toDelete}`, {
+        method: "DELETE",
+        headers: authHeader()
+      })
       day.tasks.splice(taskIndex, 1)
     },
+    logout() {
+      this.$store.dispatch("auth/logout")
+      this.$router.push("/login")
+    }
   },
   computed: {
     weekStartString() {
@@ -52,7 +60,9 @@ export default {
   <div>
     {{ this.weekData }}
     {{ this.weekStart }}
-    <the-day v-for="day in weekData" :day-data="day"/>
+    <br>
+    <button @click="logout">Logout</button>
+    <the-day v-for="day in weekData.week_days" :day-data="day"/>
   </div>
   <weeks-pagination :week-start="weekStartString"/>
 </template>

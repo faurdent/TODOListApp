@@ -6,8 +6,8 @@ class AuthService {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: "qwerty",
-                password: "qwerty1234",
+                username: user.username,
+                password: user.password,
             })
         })
             .then(response => response.json())
@@ -34,11 +34,7 @@ class AuthService {
                 username: "qwerty",
                 password: "qwerty1234",
             })
-        })
-            .then(response => response.json())
-            // .then(data => {
-            //     return data
-            // })
+        }).then(response => response.json())
     }
 }
 

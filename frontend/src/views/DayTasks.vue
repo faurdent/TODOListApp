@@ -1,5 +1,6 @@
 <script>
 import GoBack from "@/components/GoBack.vue";
+import authHeader from "@/services/auth-header";
 
 export default {
   name: "DayTasks",
@@ -14,7 +15,7 @@ export default {
   },
   methods: {
     async getData() {
-      const response = await fetch(`http://localhost:8000/my-tasks/day/${this.id}`)
+      const response = await fetch(`http://localhost:8000/my-tasks/day/${this.id}`, {headers: authHeader()})
       this.dayData = await response.json()
     }
   },

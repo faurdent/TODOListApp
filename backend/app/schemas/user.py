@@ -16,6 +16,7 @@ class UserUpdate(UserBase):
 
 class UserInDBBase(UserBase):
     pk: int
+    email: str
 
     class Config:
         orm_mode = True

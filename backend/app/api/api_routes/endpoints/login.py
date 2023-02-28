@@ -21,8 +21,9 @@ async def login_access_token(login_data: UserCreate, db: AsyncSession = Depends(
     elif not verify_password(login_data.password, user.password):
         raise HTTPException(status_code=400)
 
-    access_token_expires = timedelta(minutes=30)
+    access_token_expires = timedelta(days=7)
     return {
         "access_token": create_access_token(user.pk, access_token_expires),
+        "user_data": user,
         "token_type": "bearer",
     }

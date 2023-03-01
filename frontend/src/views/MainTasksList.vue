@@ -22,6 +22,7 @@ export default {
       fetch(`http://localhost:8000/my-tasks/week/${this.weekStartString}`, {headers: authHeader()})
           .then(res1 => res1.json())
           .then(json => this.weekData = json)
+          .catch(error => console.log(error))
     },
     async deleteTask(day, toDelete) {
       const taskIndex = day.tasks.findIndex(task => task.pk === toDelete)
@@ -34,7 +35,7 @@ export default {
     logout() {
       this.$store.dispatch("auth/logout")
       this.$router.push("/login")
-    }
+    },
   },
   computed: {
     weekStartString() {
@@ -48,6 +49,9 @@ export default {
       }
       return this.weekStart
     },
+    currentUser() {
+      return this.$store.state.auth.user
+    }
   },
   created() {
     this.getData()
@@ -62,6 +66,7 @@ export default {
     {{ this.weekStart }}
     <br>
     <button @click="logout">Logout</button>
+    <p>{{ currentUser }}</p>
     <the-day v-for="day in weekData.week_days" :day-data="day"/>
   </div>
   <weeks-pagination :week-start="weekStartString"/>

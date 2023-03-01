@@ -54,9 +54,9 @@ async def add_task(
     task_in: TaskCreate,
     day_pk: int,
     db: Session = Depends(get_db),
-    # owner: User = Depends(get_current_verified_user),
+    owner: User = Depends(get_current_verified_user),
 ):
-    day_obj = await day.get_day_with_owner(db, pk=day_pk, owner_id=1)
+    day_obj = await day.get_day_with_owner(db, pk=day_pk, owner_id=owner.pk)
     if not day_obj:
         raise HTTPException(status_code=404, detail="Day not found")
     return await task.create_task_with_day(db=db, day_id=day_pk, task_obj=task_in)

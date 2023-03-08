@@ -5,37 +5,33 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import dateFormat from "dateformat";
+import {computed} from "vue";
+import {useRouter} from "vue-router";
 
-export default {
-  name: "WeeksPagination",
-  props: {
-    weekStart: {
-      type: String,
-      required: true
-    }
-  },
-  methods: {
-    showNextWeek() {
-      this.$router.push({name: 'MainTasksList', params: {weekStart: this.nextWeekStart}})
-    },
-    showPreviousWeek() {
-      this.$router.push({name: 'MainTasksList', params: {weekStart: this.previousWeekStart}})
-    }
-  },
-  computed: {
-    nextWeekStart() {
-      const currentDate = new Date(this.weekStart)
-      currentDate.setDate(currentDate.getDate() + 7)
-      return dateFormat(currentDate, "yyyy-mm-dd")
-    },
-    previousWeekStart() {
-      const currentDate = new Date(this.weekStart)
-      currentDate.setDate(currentDate.getDate() - 7)
-      return dateFormat(currentDate, "yyyy-mm-dd")
-    }
-  }
+const props = defineProps(["weekStart"])
+
+const router = useRouter()
+
+const nextWeekStart = computed(() => {
+  const currentDate = new Date(props.weekStart)
+  currentDate.setDate(currentDate.getDate() + 7)
+  return dateFormat(currentDate, "yyyy-mm-dd")
+})
+
+const previousWeekStart = computed(() => {
+  const currentDate = new Date(props.weekStart)
+  currentDate.setDate(currentDate.getDate() - 7)
+  return dateFormat(currentDate, "yyyy-mm-dd")
+})
+
+function showNextWeek() {
+  router.push({name: 'MainTasksList', params: {weekStart: nextWeekStart.value}})
+}
+
+function showPreviousWeek() {
+  router.push({name: 'MainTasksList', params: {weekStart: previousWeekStart.value}})
 }
 </script>
 

@@ -17,13 +17,12 @@ export const useWeekDataStore = defineStore("weekData", () => {
     })
 
     async function fetchData(weekStart) {
-        console.log(weekStart)
+        isDataLoaded.value = false
         const response = await axios.get(`http://localhost:8000/my-tasks/week/${weekStart}`)
 
         weekStartDate.value = response.data.start_day
         weekdays.value = response.data.week_days
         isDataLoaded.value = true
-        // weekDataObj.value = response.data
     }
 
     function deleteTask(dayPk, taskID, taskPk) {

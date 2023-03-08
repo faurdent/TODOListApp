@@ -1,7 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router"
 
-import {useWeekDataStore} from "@/store/weekData";
-
 import MainTasksList from "@/views/MainTasksList.vue";
 
 const routes = [
@@ -10,10 +8,6 @@ const routes = [
         name: "MainTasksList",
         component: MainTasksList,
         props: true,
-        beforeEnter: (to, from) => {
-            const store = useWeekDataStore()
-            store.fetchData(to.params.weekStart)
-        },
     },
     // {path: "/week/:weekStart/:weekdaySlug", name: "DayTasks", component: DayTasks, props: true},
 ]

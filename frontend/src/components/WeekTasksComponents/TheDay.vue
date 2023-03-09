@@ -2,10 +2,10 @@
   <div style="transition: margin-top; transition-duration: 0.25s">
     <h2 style="display: inline;">{{ dayData.weekday }}</h2>
     <button @click="toggleForm">Add Task</button>
-    <the-modal-add @close="toggleForm" :weekday="dayData.weekday" v-if="isModalVisible"/>
+    <the-modal-add @close="toggleForm" :weekday="dayData.pk" v-if="isModalVisible"/>
     <div v-if="isModalVisible" id="overlay"></div>
     <ul>
-      <li v-for="(task, index) in tasks">
+      <li v-for="(task, index) in dayTasks">
         <the-task :dayPk="dayData.pk" :index="index" :taskData="task"/>
       </li>
     </ul>
@@ -14,7 +14,7 @@
 
 
 <script setup>
-import {defineProps, ref} from "vue"
+import {computed, defineProps, ref} from "vue"
 
 import TheTask from "@/components/WeekTasksComponents/TheTask.vue";
 import {useWeekDataStore} from "@/store/weekData";
@@ -24,8 +24,6 @@ import TheModalAdd from "@/components/WeekTasksComponents/TheModalAdd.vue";
 const props = defineProps(["dayData"])
 
 const weekDataStore = useWeekDataStore()
-
-const tasks = ref(props.dayData.tasks)
 const router = useRouter()
 
 const isModalVisible = ref(false)
@@ -36,19 +34,14 @@ const taskData = ref({
   deadline: "",
 })
 
+const dayTasks = computed(() => {
+  return weekDataStore.tasks.filter((task) => {
+    return task.day_id === props.dayData.pk
+  })
+})
+
 function toggleForm() {
   isModalVisible.value = !isModalVisible.value
-}
-
-function formClear() {
-  for (const key in taskData.value) {
-    taskData.value[key] = ""
-  }
-}
-
-function addTask() {
-  weekDataStore.addTask(props.dayData.pk, taskData.value)
-  formClear()
 }
 
 </script>

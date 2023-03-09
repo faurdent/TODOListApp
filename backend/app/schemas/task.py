@@ -37,7 +37,7 @@ class DaySchema(BaseModel):
     pk: int
     weekday: str
     day_date: date
-    tasks: list[TaskSchema] | None = None
+    # tasks: list[TaskSchema] | None = None
 
     class Config:
         orm_mode = True
@@ -46,6 +46,7 @@ class DaySchema(BaseModel):
 class WeekSchema(BaseModel):
     start_day: date
     week_days: list[DaySchema]
+    tasks: list[TaskSchema]
 
     class Config:
         orm_mode = True

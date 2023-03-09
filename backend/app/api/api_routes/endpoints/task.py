@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_db, get_current_verified_user
-from app.crud import task, week, day
+from app.crud import task, week, day, relationship_collectors
 from app.models import User
 from app.schemas import TaskSchema, TaskUpdate, TaskCreate, DaySchema, WeekSchema
 
@@ -81,7 +81,14 @@ async def get_tasks_for_week(
     # owner: User = Depends(get_current_verified_user)
 ):
     current_week = await week.get_week_with_owner(db=db, start_day=week_start, owner_id=1)
+    # weekdays = current_week.week_days or await day.create_days_for_week(db, current_week.pk, week_start)
+    tasks = []
     if current_week.week_days:
-        return current_week
-    weekdays = await day.create_days_for_week(db, current_week.pk, week_start)
-    return WeekSchema(start_day=current_week.start_day, week_days=weekdays)
+        weekdays = current_week.week_days
+        tasks = relationship_collectors.collect_tasks(weekdays)
+    else:
+        weekdays = await day.create_days_for_week(db, current_week.pk, week_start)
+    # if not current_week.week_days:
+    #     weekdays = current_week
+    # weekdays = await day.create_days_for_week(db, current_week.pk, week_start)
+    return WeekSchema(start_day=current_week.start_day, week_days=weekdays, tasks=tasks)

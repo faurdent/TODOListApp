@@ -22,6 +22,7 @@ export const useWeekDataStore = defineStore("weekData", () => {
 
         weekStartDate.value = response.data.start_day
         weekdays.value = response.data.week_days
+        tasks.value = response.data.tasks
         isDataLoaded.value = true
     }
 
@@ -35,13 +36,11 @@ export const useWeekDataStore = defineStore("weekData", () => {
     }
 
     async function addTask(dayPk, taskData) {
+        console.log(dayPk)
+        console.log(taskData)
         const response = await axios.post(`http://localhost:8000/my-tasks/${dayPk}`, taskData)
         console.log(response.data)
-        weekdays.value.forEach((day) => {
-            if (day.pk === dayPk) {
-                day.tasks.push(response.data)
-            }
-        })
+        tasks.value.push(response.data)
     }
 
     async function updateTask(dayPk, newTaskData, taskPk) {
@@ -57,5 +56,5 @@ export const useWeekDataStore = defineStore("weekData", () => {
         })
     }
 
-    return {fetchData, deleteTask, addTask, updateTask, getWeekDays, getStartDate, isDataLoaded}
+    return {fetchData, deleteTask, addTask, updateTask, getWeekDays, getStartDate, isDataLoaded, tasks}
 })

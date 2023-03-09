@@ -2,7 +2,7 @@
   <div class="modal-window active-modal" id="modal">
     <h2>Add task for {{weekday}}</h2>
     <div class="modal-header">
-      <button class="close-button" @click="$emit('close')">&times;</button>
+      <button class="close-button" @click="emit('close')">&times;</button>
     </div>
     <div class="modal-body">
       <form ref="addForm" @submit.prevent="addTask">
@@ -27,14 +27,23 @@
 
 <script setup>
 import {ref} from "vue";
+import {useWeekDataStore} from "@/store/weekData";
 
 const props = defineProps(["weekday"])
+const emit = defineEmits(["close"])
+
+const weekDataStore = useWeekDataStore()
 
 const taskData = ref({
   title: "",
   description: "",
   deadline: "",
 })
+
+function addTask() {
+  weekDataStore.addTask(props.weekday, taskData.value)
+  emit("close")
+}
 </script>
 
 <style scoped>
@@ -65,11 +74,6 @@ const taskData = ref({
   border-bottom: 1px solid black;
 }
 
-.modal-header > .title {
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
 .modal-header > .close-button {
   cursor: pointer;
   border: none;
@@ -83,22 +87,4 @@ const taskData = ref({
   padding: 10px 15px;
   border-bottom: 1px solid black;
 }
-
-.modal-footer {
-  display: flex;
-  padding: 10px 15px;
-  justify-content: flex-end;
-}
-
-.button-cancel {
-  background: white;
-  border: rgb(64, 149, 191) 1px solid;
-  color: rgb(64, 149, 191);
-}
-
-.button-cancel:hover {
-  background: rgb(217, 234, 242);
-}
-
-
 </style>

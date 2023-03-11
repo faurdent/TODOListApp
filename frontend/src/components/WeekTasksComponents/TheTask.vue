@@ -20,23 +20,12 @@ const props = defineProps(["taskData", "index", "dayPk"])
 
 const isFormVisible = ref(false)
 
-const updateTaskData = {
-  title: props.taskData.title,
-  description: props.taskData.description,
-  deadline: props.taskData.deadline,
-}
-
 function deleteTask() {
-  store.deleteTask(props.dayPk, props.index, props.taskData.pk)
+  store.deleteTask(props.taskData.pk)
 }
 
 function toggleForm() {
   isFormVisible.value = !isFormVisible.value
-}
-
-function updateTask() {
-  store.updateTask(props.taskData.pk, updateTaskData)
-  toggleForm()
 }
 </script>
 

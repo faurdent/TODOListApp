@@ -26,13 +26,10 @@ export const useWeekDataStore = defineStore("weekData", () => {
         isDataLoaded.value = true
     }
 
-    function deleteTask(dayPk, taskID, taskPk) {
+    function deleteTask(taskPk) {
         axios.delete(`http://localhost:8000/my-tasks/${taskPk}`).then(response => response.data)
-        weekdays.value.forEach((day) => {
-            if (day.pk === dayPk) {
-                day.tasks.splice(taskID, 1)
-            }
-        })
+        const taskIndex = tasks.value.findIndex((task) => task.pk === taskPk)
+        tasks.value.splice(taskIndex, 1)
     }
 
     async function addTask(dayPk, taskData) {

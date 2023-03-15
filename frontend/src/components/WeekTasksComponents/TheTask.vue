@@ -15,7 +15,7 @@ import {defineProps, ref} from "vue"
 import {useWeekDataStore} from "@/store/weekData";
 import TheModalUpdate from "@/components/WeekTasksComponents/TheModalUpdate.vue";
 
-const store = useWeekDataStore()
+const weekDataStore = useWeekDataStore()
 
 const props = defineProps(["taskData", "index", "dayPk"])
 
@@ -24,14 +24,14 @@ const isFormVisible = ref(false)
 const isDoneStatusInputDisabled = ref(false)
 
 function deleteTask() {
-  store.deleteTask(props.taskData.pk)
+  weekDataStore.deleteTask(props.taskData.pk)
 }
 
 function setDoneStatus() {
   const taskDataUpdate = {...props.taskData.value}
   taskDataUpdate.is_done = !taskDataUpdate.is_done
   isDoneStatusInputDisabled.value = true
-  store.updateTask(props.taskData.pk, taskDataUpdate)
+  weekDataStore.updateTask(props.taskData.pk, taskDataUpdate)
   setTimeout(() => {isDoneStatusInputDisabled.value = false}, 1000)
 }
 

@@ -1,6 +1,9 @@
 import {createRouter, createWebHistory} from "vue-router"
 
 import MainTasksList from "@/views/MainTasksList.vue";
+import Login from "@/views/Login.vue"
+import { useAuthStore } from "@/store/auth";
+
 
 const routes = [
     {
@@ -8,8 +11,13 @@ const routes = [
         name: "MainTasksList",
         component: MainTasksList,
         props: true,
+        meta: {requiresAuth: true}
     },
-    // {path: "/week/:weekStart/:weekdaySlug", name: "DayTasks", component: DayTasks, props: true},
+    {
+        path: "/login",
+        name: "login",
+        component: Login
+    }
 ]
 
 const router = createRouter({
@@ -17,5 +25,11 @@ const router = createRouter({
     routes
 })
 
+router.beforeEach((to, from) => {
+    const authStore = useAuthStore() 
+    if (to.meta.requiresAuth && authStore.userState.status.loggedIn === false) {
+        return {name: "login", query: {redirectURL: to.fullPath}}
+    }
+})
 
 export default router

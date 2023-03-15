@@ -1,7 +1,8 @@
 <template>
-  <div v-if="store.isDataLoaded">
-    <h1>Start of the week: {{ store.getStartDate }}</h1>
-    <the-day v-for="day in store.getWeekDays" :day-data="day"/>
+  <div v-if="weekDataStore.isDataLoaded">
+    <h1>Start of the week: {{ weekDataStore.getStartDate }}</h1>
+    <button @click="logout">Logout</button>
+    <the-day v-for="day in weekDataStore.getWeekDays" :day-data="day"/>
     <weeks-pagination :week-start="weekStartString"/>
   </div>
 </template>
@@ -13,11 +14,21 @@ import dateFormat from "dateformat";
 
 import TheDay from "@/components/WeekTasksComponents/TheDay.vue";
 import WeeksPagination from "@/components/WeeksPagination.vue";
+import { useAuthStore } from "@/store/auth";
+import { useRouter } from "vue-router";
 
 
-const store = useWeekDataStore()
+const weekDataStore = useWeekDataStore()
+const authStore = useAuthStore()
+
+const router = useRouter()
 
 const props = defineProps(["weekStart"])
+
+function logout() {
+  authStore.logout()
+  router.push("/login")
+}
 
 const weekStartString = computed(() => {
   if (!props.weekStart) {
@@ -31,5 +42,5 @@ const weekStartString = computed(() => {
   return props.weekStart
 })
 
-store.fetchData(weekStartString.value)
+weekDataStore.fetchData(weekStartString.value)
 </script>

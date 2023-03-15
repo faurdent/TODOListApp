@@ -35,9 +35,11 @@ const taskData = ref({
 })
 
 const dayTasks = computed(() => {
-  return weekDataStore.tasks.filter((task) => {
+  const tasksFiltered = weekDataStore.tasks.filter((task) => {
     return task.day_id === props.dayData.pk
   })
+  tasksFiltered.sort((firstTask, secondTask) => firstTask.is_done - secondTask.is_done)
+  return tasksFiltered
 })
 
 function toggleForm() {

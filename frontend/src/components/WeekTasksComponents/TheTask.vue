@@ -2,7 +2,7 @@
   <div>
     <h4>{{ taskData.title }}</h4>
     <p>Description: {{ taskData.description || "not provided" }}</p>
-    <input type="checkbox" :checked="taskData.is_done" :disabled="isDoneStatusInputDisabled" @click="setDoneStatus">
+    <input :key="taskData.pk" type="checkbox" :checked="taskData.is_done" @click="setDoneStatus">
     <button @click="toggleForm">Update</button>
     <button @click="deleteTask">Delete</button>
     <the-modal-update @close="toggleForm" :task-data="taskData" v-if="isFormVisible"/>
@@ -21,18 +21,15 @@ const props = defineProps(["taskData", "index", "dayPk"])
 
 const isFormVisible = ref(false)
 
-const isDoneStatusInputDisabled = ref(false)
-
 function deleteTask() {
   weekDataStore.deleteTask(props.taskData.pk)
 }
 
 function setDoneStatus() {
-  const taskDataUpdate = {...props.taskData.value}
+  const taskDataUpdate = {...props.taskData}
   taskDataUpdate.is_done = !taskDataUpdate.is_done
-  isDoneStatusInputDisabled.value = true
+  console.log(taskDataUpdate)
   weekDataStore.updateTask(props.taskData.pk, taskDataUpdate)
-  setTimeout(() => {isDoneStatusInputDisabled.value = false}, 1000)
 }
 
 function toggleForm() {

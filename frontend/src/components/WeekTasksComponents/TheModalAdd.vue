@@ -1,6 +1,6 @@
 <template>
   <div class="modal-window active-modal" id="modal">
-    <h2>Add task for {{weekday}}</h2>
+    <h2>Add task for {{dayData.weekday}}</h2>
     <div class="modal-header">
       <button class="close-button" @click="emit('close')">&times;</button>
     </div>
@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import {useWeekDataStore} from "@/store/weekData";
 
 const props = defineProps(["weekday"])
@@ -44,6 +44,8 @@ function addTask() {
   weekDataStore.addTask(props.weekday, taskData.value)
   emit("close")
 }
+
+const dayData = computed(() => weekDataStore.getWeekDays.find((day) => day.pk === props.weekday))
 </script>
 
 <style scoped>

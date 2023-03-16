@@ -6,7 +6,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    email: EmailStr
+    email: str
     password: str
 
 

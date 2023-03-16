@@ -9,7 +9,7 @@ from app.models import Day, Week
 
 class CRUDDay(CRUDBase[Day]):
     async def create_days_for_week(self, db: AsyncSession, week_id: int, week_start: date):
-        weekdays = ("Monday", "Tuesday", "Wednesday", "Tuesday", "Friday", "Saturday", "Sunday")
+        weekdays = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
         day_objs = []
         for weekday_number, weekday_name in enumerate(weekdays):
             day_date = week_start + timedelta(days=weekday_number)

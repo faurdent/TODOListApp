@@ -76,9 +76,7 @@ async def get_tasks_for_day(
 
 @router.get("/week/{week_start}", response_model=WeekSchema)
 async def get_tasks_for_week(
-    week_start: date,
-    db: AsyncSession = Depends(get_db),
-    owner: User = Depends(get_current_verified_user)
+    week_start: date, db: AsyncSession = Depends(get_db), owner: User = Depends(get_current_verified_user)
 ):
     current_week = await week.get_week_with_owner(db=db, start_day=week_start, owner_id=owner.pk)
     tasks = []

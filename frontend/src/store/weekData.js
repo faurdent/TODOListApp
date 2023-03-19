@@ -3,6 +3,8 @@ import {computed, ref} from "vue";
 import axios from "axios";
 import authHeader from "@/services/auth-header";
 
+import axiosInstance from "@/services/axiosInstance";
+
 export const useWeekDataStore = defineStore("weekData", () => {
     const weekStartDate = ref(null)
     const weekdays = ref([])
@@ -19,11 +21,12 @@ export const useWeekDataStore = defineStore("weekData", () => {
 
     async function fetchData(weekStart) {
         isDataLoaded.value = false
-        const response = await axios.get(`http://localhost:8000/my-tasks/week/${weekStart}`, {headers: authHeader()})
+        const response = await axiosInstance.get(`http://localhost:8000/my-tasks/week/${weekStart}`, {headers: authHeader()})
         weekStartDate.value = response.data.start_day
         weekdays.value = response.data.week_days
         tasks.value = response.data.tasks
         isDataLoaded.value = true
+        return response
     }
 
     function deleteTask(taskPk) {

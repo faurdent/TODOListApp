@@ -42,5 +42,11 @@ const weekStartString = computed(() => {
   return props.weekStart
 })
 
-weekDataStore.fetchData(weekStartString.value)
+weekDataStore.fetchData(weekStartString.value).catch((error) => {
+  if (error.response.status === 401) {
+    console.log(authStore.userState);
+    authStore.logout()
+    router.push("/login")
+  }
+})
 </script>

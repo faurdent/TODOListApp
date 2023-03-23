@@ -7,7 +7,6 @@ const axiosInstance = axios.create()
 axiosInstance.interceptors.response.use(function(response) {
     return response
 }, function(error) {
-    console.log("In interceptor");
     const originalRequest = error.config
     if (error.response.status === 401 && !originalRequest.tokenRequested) {
         authService.logout()

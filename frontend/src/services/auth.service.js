@@ -25,10 +25,18 @@ class AuthService {
         }
     }
 
+    async signUp(user) {
+        const response = await axios.post(`${BASE_URL}/users/sign-up/`, {
+            email: user.username,
+            password: user.password,
+        })
+        return response.data
+    }
+
     logout() {
         localStorage.removeItem("user")
-        
     }
+
 }
 
 

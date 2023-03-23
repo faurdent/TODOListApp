@@ -28,5 +28,12 @@ export const useAuthStore = defineStore("auth", () => {
         userState.user = null
     }
 
-    return {login, logout, userState}
+    function signUp(user) {
+        return authService.signUp(user).then(
+            user => Promise.resolve(user),
+            error => Promise.reject(error),
+        )
+    }
+
+    return {login, signUp, logout, userState}
 })

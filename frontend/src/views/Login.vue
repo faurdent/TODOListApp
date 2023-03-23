@@ -25,6 +25,10 @@
             <span>Login</span>
           </button>
         </div>
+        <div>
+          <p>Dont have an account?</p>
+          <router-link to="/sign-up">Sign Up</router-link>
+        </div>
         <div class="form-group">
           <div v-if="message" class="alert alert-danger" role="alert">{{ message }}</div>
         </div>

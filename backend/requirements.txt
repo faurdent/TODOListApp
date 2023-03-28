@@ -1,5 +1,6 @@
 # Core
 fastapi==0.92.0
+fastapi-mail==1.2.6
 uvicorn==0.20.0
 pydantic[email]==1.10.5
 

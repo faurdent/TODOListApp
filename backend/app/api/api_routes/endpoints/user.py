@@ -21,3 +21,8 @@ async def sign_up(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
     await db.flush()
     await db.refresh(new_user)
     return new_user
+
+
+@router.post("/verify/{verification_id}")
+async def verify_account():
+    pass

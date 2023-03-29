@@ -7,9 +7,9 @@ from app.db import Base
 from .user import User
 
 
-class VerificationIds(Base):
+class VerificationCode(Base):
     __tablename__ = "verification_ids"
-    verification_id = mapped_column(UUID(as_uuid=True))
+    verification_code = mapped_column(UUID(as_uuid=True))
     valid_until: Mapped[datetime]
     user_id: Mapped[int] = mapped_column(ForeignKey("user.pk"))
-    user: Mapped["User"] = relationship(backref="verification_id", uselist=False)
+    user: Mapped["User"] = relationship(backref="verification_code", uselist=False)

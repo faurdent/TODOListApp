@@ -14,10 +14,10 @@ class AuthService {
         }
         return userData
     }
-    
+
     async refreshToken() {
         try {
-            const response =  await axios.get(`${BASE_URL}/refresh-token`, {withCredentials: true})
+            const response = await axios.get(`${BASE_URL}/refresh-token`, {withCredentials: true})
             localStorage.setItem("user", JSON.stringify(response.data))
             return response.data.access_token
         } catch (error) {
@@ -30,6 +30,11 @@ class AuthService {
             email: user.username,
             password: user.password,
         })
+        return response.data
+    }
+
+    async verifyAccount(verificationCode) {
+        const response = await axios.get(`${BASE_URL}/users/verify/${verificationCode}`)
         return response.data
     }
 

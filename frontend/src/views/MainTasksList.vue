@@ -14,8 +14,8 @@ import dateFormat from "dateformat";
 
 import TheDay from "@/components/WeekTasksComponents/TheDay.vue";
 import WeeksPagination from "@/components/WeeksPagination.vue";
-import { useAuthStore } from "@/store/auth";
-import { useRouter } from "vue-router";
+import {useAuthStore} from "@/store/auth";
+import {useRouter} from "vue-router";
 
 
 const weekDataStore = useWeekDataStore()
@@ -25,15 +25,19 @@ const router = useRouter()
 
 const props = defineProps(["weekStart"])
 
+if (!authStore.userState.status.loggedIn) {
+    router.push("/login")
+}
+
 function logout() {
-  authStore.logout()
-  router.push("/login")
+    authStore.logout()
+    router.push("/login")
 }
 
 const weekStartString = computed(() => {
-  if (!props.weekStart) {
-    const nowDate = new Date()
-    const nowDay = nowDate.getDay() || 7
+    if (!props.weekStart) {
+        const nowDate = new Date()
+        const nowDay = nowDate.getDay() || 7
     if (nowDay !== 1) {
       nowDate.setHours(-24 * (nowDay - 1))
     }
@@ -43,10 +47,12 @@ const weekStartString = computed(() => {
 })
 
 weekDataStore.fetchData(weekStartString.value).catch((error) => {
-  if (error.response.status === 401) {
-    console.log(authStore.userState);
-    authStore.logout()
-    router.push("/login")
-  }
+    if (error.response.status === 401) {
+        console.log(authStore.userState);
+        authStore.logout()
+        router.push("/login")
+    } else if (error.response.status === 403) {
+        router.push("/verify-account")
+    }
 })
 </script>

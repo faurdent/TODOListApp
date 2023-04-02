@@ -3,7 +3,7 @@
     <div class="card card-container">
       <form name="form" @submit.prevent="handleRegister">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">Email</label>
           <input
               v-model="userData.username"
               type="text"
@@ -56,7 +56,7 @@ function handleRegister() {
     authStore.signUp(userData.value)
         .then(
             () => {
-              router.push("/login")
+                router.push("/verify-account")
             },
             error => {
               message.value = error.response.data.detail

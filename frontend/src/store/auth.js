@@ -1,6 +1,5 @@
-import { defineStore } from "pinia";
+import {defineStore} from "pinia";
 import authService from "@/services/auth.service";
-import {useRouter} from "vue-router"
 
 const user = JSON.parse(localStorage.getItem("user"))
 const initialState = user ? {status: {loggedIn: true}, user: user} : {status: {loggedIn: false}, user: null}
@@ -35,5 +34,15 @@ export const useAuthStore = defineStore("auth", () => {
         )
     }
 
-    return {login, signUp, logout, userState}
+    function verifyAccount(verificationCode) {
+        return authService.verifyAccount(verificationCode).then(
+            verifiedUser => {
+                userState.user = verifiedUser
+                Promise.resolve(verifiedUser)
+            },
+            error => Promise.reject(error)
+        )
+    }
+
+    return {login, signUp, logout, verifyAccount, userState}
 })

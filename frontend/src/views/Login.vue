@@ -3,7 +3,7 @@
     <div class="card card-container">
       <form name="form" @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">Email</label>
           <input
               v-model="userData.email"
               type="text"
@@ -38,9 +38,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useAuthStore } from "@/store/auth"
-import { useRoute, useRouter } from "vue-router";
+import {ref} from "vue";
+import {useAuthStore} from "@/store/auth"
+import {useRoute, useRouter} from "vue-router";
 import dateFormat from "dateformat";
 
 const authStore = useAuthStore()

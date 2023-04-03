@@ -2,7 +2,7 @@ import axios from "axios";
 import authService from "./auth.service";
 import authHeader from "./auth-header";
 
-const axiosInstance = axios.create()
+const axiosInstance = axios.create({headers: {"Content-Type": "application/json"}})
 
 axiosInstance.interceptors.response.use(function(response) {
     return response

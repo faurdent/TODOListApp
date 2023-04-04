@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from environs import Env
-
 from fastapi_mail import ConnectionConfig
 
 env_path = Path(__file__).resolve().parents[2].joinpath(".env")
@@ -33,10 +32,13 @@ class AppConfig:
 
     def get_smtp_config(self):
         return ConnectionConfig(
-            self.MAIL_USERNAME,
-            self.MAIL_PASSWORD,
-            self.MAIL_PORT,
-            self.MAIL_SERVER,
+            MAIL_USERNAME=self.MAIL_USERNAME,
+            MAIL_PASSWORD=self.MAIL_PASSWORD,
+            MAIL_FROM=self.MAIL_FROM,
+            MAIL_PORT=self.MAIL_PORT,
+            MAIL_SERVER=self.MAIL_SERVER,
+            MAIL_STARTTLS=self.MAIL_STARTTLS,
+            MAIL_SSL_TLS=self.MAIL_SSL_TLS,
         )
 
 

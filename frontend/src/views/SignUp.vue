@@ -56,7 +56,7 @@ function handleRegister() {
     authStore.signUp(userData.value)
         .then(
             () => {
-                router.push("/verify-account")
+                router.push({path: "/verify-account", query: {redirectURL: "/login"}})
             },
             error => {
               message.value = error.response.data.detail

@@ -1,5 +1,6 @@
 # Core
 fastapi==0.92.0
+fastapi-mail==1.2.6
 uvicorn==0.20.0
 pydantic[email]==1.10.5
 
@@ -13,7 +14,8 @@ passlib==1.7.4
 python-jose[cryptography]==3.3.0
 python-multipart==0.0.5
 
-python-dotenv==0.21.1
+# Environment
+environs==9.5.0
 
 # Autoformatting & Codestyle
 pre-commit==3.0.4

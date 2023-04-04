@@ -24,7 +24,7 @@ class CRUDBase(Generic[ModelType]):
         queryset = await db.execute(select(self.model))
         return queryset.scalars().all()
 
-    async def update(self, db: AsyncSession, obj_in: Type[UpdateSchemaType], obj_db):
+    async def update(self, db: AsyncSession, obj_in: Type[UpdateSchemaType] | dict, obj_db):
         old_obj_data = jsonable_encoder(obj_db)
         if isinstance(obj_in, dict):
             update_data = obj_in
@@ -42,7 +42,7 @@ class CRUDBase(Generic[ModelType]):
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)
-        await db.commit()
+        await db.flush()
         await db.refresh(db_obj)
         return db_obj
 

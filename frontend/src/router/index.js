@@ -2,7 +2,10 @@ import {createRouter, createWebHistory} from "vue-router"
 
 import MainTasksList from "@/views/MainTasksList.vue";
 import Login from "@/views/Login.vue"
-import { useAuthStore } from "@/store/auth";
+import SignUp from "@/views/SignUp.vue";
+import VerificationForm from "@/views/VerificationForm.vue";
+
+import {useAuthStore} from "@/store/auth";
 
 
 const routes = [
@@ -17,6 +20,16 @@ const routes = [
         path: "/login",
         name: "login",
         component: Login
+    },
+    {
+        path: "/sign-up",
+        name: "signUp",
+        component: SignUp,
+    },
+    {
+        path: "/verify-account",
+        name: "verifyAccount",
+        component: VerificationForm,
     }
 ]
 

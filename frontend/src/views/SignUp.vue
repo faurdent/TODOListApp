@@ -1,11 +1,11 @@
 <template>
   <div class="col-md-12">
     <div class="card card-container">
-      <form name="form" @submit.prevent="handleLogin">
+      <form name="form" @submit.prevent="handleRegister">
         <div class="form-group">
           <label for="username">Email</label>
           <input
-              v-model="userData.email"
+              v-model="userData.username"
               type="text"
               class="form-control"
               name="username"
@@ -20,14 +20,9 @@
               name="password">
         </div>
         <div class="form-group">
-          <button class="btn btn-primary btn-block" :disabled="loading">
-            <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-            <span>Login</span>
+          <button class="btn btn-primary btn-block">
+            <span>Sign Up</span>
           </button>
-        </div>
-        <div>
-          <p>Dont have an account?</p>
-          <router-link to="/sign-up">Sign Up</router-link>
         </div>
         <div class="form-group">
           <div v-if="message" class="alert alert-danger" role="alert">{{ message }}</div>
@@ -38,48 +33,40 @@
 </template>
 
 <script setup>
+import {useAuthStore} from "@/store/auth";
 import {ref} from "vue";
-import {useAuthStore} from "@/store/auth"
-import {useRoute, useRouter} from "vue-router";
 import dateFormat from "dateformat";
+import {useRouter} from "vue-router";
 
 const authStore = useAuthStore()
-
 const router = useRouter()
-const route = useRoute()
 
 const userData = ref({
-    email: "",
-    password: "",
+  username: "",
+  password: "",
 })
-const loading = ref(false)
 const message = ref("")
 
 if (authStore.userState.status.loggedIn) {
-  redirect()
-}
-
-function redirect() {
-  const redirectURL = route.query.redirectURL
-  if (redirectURL) {
-    router.push(redirectURL)
-    return
-  }
   router.push(`/week/${dateFormat(new Date(), "yyyy-mm-dd")}`);
 }
 
-async function handleLogin() {
-      if (userData.value.email && userData.value.password) {
-        authStore.login(userData.value)
+function handleRegister() {
+  if (userData.value.username && userData.value.password) {
+    authStore.signUp(userData.value)
         .then(
             () => {
-              redirect()
+                router.push({path: "/verify-account", query: {redirectURL: "/login"}})
             },
             error => {
-              loading.value = false;
-              message.value = error.response.data.detail.msg
+              message.value = error.response.data.detail
             }
-        );
-    }
+        )
+  }
 }
+
 </script>
+
+<style scoped>
+
+</style>

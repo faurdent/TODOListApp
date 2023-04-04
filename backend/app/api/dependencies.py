@@ -1,15 +1,13 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
-from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app.core.security import ALGORITHM
+from app.core.security import decode_token
 from app.db import SessionLocal
 from app.models import User
-from app.schemas import TokenData
+from app.services.email_operations import send_verification_code
 
 oauth2 = OAuth2PasswordBearer(tokenUrl="access-token")
 
@@ -24,32 +22,24 @@ async def get_db():
                 raise e
 
 
-async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(oauth2)) -> User:
-    try:
-        payload = jwt.decode(
-            token,
-            "8ZIOl6Rcuh4X+/oK/iArCx4qWSBkGjG3nXGcSlC0xx8=",
-            algorithms=[ALGORITHM],
-        )
-        token_data = TokenData(**payload)
-    except (jwt.JWTError, ValidationError) as exc:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        ) from exc
-
+async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(oauth2)):
+    token_data = decode_token(token)
     queryset = await db.execute(select(User).where(User.pk == token_data.subject))
     user = queryset.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-
     return user
 
 
-def get_current_verified_user(current_user: User = Depends(get_current_user)):
+def get_current_verified_user(
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     if not current_user.is_verified:
+        background_tasks.add_task(send_verification_code, db, current_user.pk, current_user.email)
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="Inactive user. Verify your account",
         )
     return current_user

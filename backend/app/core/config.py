@@ -24,6 +24,8 @@ class AppConfig:
     MAIL_STARTTLS = env.bool("MAIL_STARTTLS")
     MAIL_SSL_TLS = env.bool("MAIL_SSL_TLS")
 
+    JWT_SECRET_KEY = env.str("JWT_SECRET_KEY")
+
     def get_db_url(self):
         return (
             f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"

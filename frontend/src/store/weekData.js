@@ -1,6 +1,5 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
-import axios from "axios";
 import authHeader from "@/services/auth-header";
 
 import axiosInstance from "@/services/axiosInstance";
@@ -30,18 +29,18 @@ export const useWeekDataStore = defineStore("weekData", () => {
     }
 
     function deleteTask(taskPk) {
-        axios.delete(`http://localhost:8000/my-tasks/${taskPk}`, {headers: authHeader()}).then(response => response.data)
+        axiosInstance.delete(`http://localhost:8000/my-tasks/${taskPk}`, {headers: authHeader()}).then(response => response.data)
         const taskIndex = tasks.value.findIndex((task) => task.pk === taskPk)
         tasks.value.splice(taskIndex, 1)
     }
 
     async function addTask(dayPk, taskData) {
-        const response = await axios.post(`http://localhost:8000/my-tasks/${dayPk}`, taskData, {headers: authHeader()})
+        const response = await axiosInstance.post(`http://localhost:8000/my-tasks/${dayPk}`, taskData, {headers: authHeader()})
         tasks.value.push(response.data)
     }
 
     async function updateTask(taskPk, newTaskData) {
-        const response = await axios.put(`http://localhost:8000/my-tasks/${taskPk}`, newTaskData, {headers: authHeader()})
+        const response = await axiosInstance.put(`http://localhost:8000/my-tasks/${taskPk}`, newTaskData, {headers: authHeader()})
         const taskIndex = tasks.value.findIndex((task) => task.pk === taskPk)
         tasks.value[taskIndex] = response.data
     }

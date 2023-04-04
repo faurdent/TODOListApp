@@ -33,9 +33,9 @@ async def verify_account(verification_user_code: str, db: AsyncSession = Depends
 
 @router.post("/send-verification-email")
 async def send_verification_email(
-        background_tasks: BackgroundTasks,
-        db: AsyncSession = Depends(get_db),
-        user_info: UserSchema = Depends(get_current_user)
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    user_info: UserSchema = Depends(get_current_user),
 ):
     background_tasks.add_task(send_verification_code, db, user_info.pk, user_info.email)
     return {"msg": "Email sent successfully"}

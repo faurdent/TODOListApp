@@ -22,10 +22,7 @@ async def get_db():
                 raise e
 
 
-async def get_current_user(
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(oauth2)
-) -> User:
+async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(oauth2)):
     token_data = decode_token(token)
     queryset = await db.execute(select(User).where(User.pk == token_data.subject))
     user = queryset.scalars().first()
@@ -35,16 +32,14 @@ async def get_current_user(
 
 
 def get_current_verified_user(
-        background_tasks: BackgroundTasks,
-        db: AsyncSession = Depends(get_db),
-        current_user: User = Depends(get_current_user),
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    print(background_tasks.__dict__)
     if not current_user.is_verified:
         background_tasks.add_task(send_verification_code, db, current_user.pk, current_user.email)
-        print(background_tasks.__dict__)
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Inactive user. Verify your account",
         )
-    yield current_user
+    return current_user

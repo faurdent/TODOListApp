@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,9 +17,10 @@ class CRUDWeek(CRUDBase[Week]):
         return db_obj
 
     async def get_week_with_owner(self, db: AsyncSession, start_day: date, owner_id: int):
+        start_day_normalized = start_day - timedelta(days=start_day.weekday())
         queryset = await db.execute(
             select(self.model)
-            .where(self.model.start_day == start_day, self.model.owner_id == owner_id)
+            .where(self.model.start_day == start_day_normalized, self.model.owner_id == owner_id)
             .options(joinedload(self.model.week_days).options(joinedload(Day.tasks)))
         )
         week_obj = queryset.scalars().first()

@@ -32,7 +32,7 @@ def decode_token(token: str | None) -> TokenData:
             algorithms=[ALGORITHM],
         )
         return TokenData(**payload)
-    except (jwt.JWTError, ValidationError) as exc:
+    except (jwt.JWTError, ValidationError, AttributeError) as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
